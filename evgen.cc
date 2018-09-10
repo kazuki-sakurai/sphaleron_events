@@ -161,12 +161,15 @@ double generateRamboKinematics(
              vector<Energy> m,
 			       Energy Ecm) {
 
-  size_t n_ = m.size();
   vector<Lorentz5Momentum> P;
-  for(int i=0; i<m.size(); i++) P[i].setMass(m[i]);
+  for(int i=0; i<m.size(); i++){
+    Lorentz5Momentum pdm;
+    pdm.setMass(m[i]);
+    P.push_back(pdm);
+  }
 
   vector<double> r;
-  r.resize(4*n_);
+  r.resize(4*m.size());
 
   for ( vector<double>::iterator rnd = r.begin(); rnd != r.end(); ++rnd ) {
     *rnd = drand48();
@@ -230,6 +233,18 @@ double generateRamboKinematics(
     (*k).rescaleEnergy();
   }
 
+  if(0){
+    for ( vector<Lorentz5Momentum>::iterator k = P.begin();
+    k != P.end(); ++k, ++d ) {
+      double px = k->x()/GeV;
+      double py = k->y()/GeV;
+      double pz = k->z()/GeV;
+      double E = k->t()/GeV;
+      double m = k->m()/GeV;
+      cout << E <<"  "<< px <<"  "<< py <<"  "<< pz <<"  "<< m << endl;
+    }
+  }
+
   weight *= num/den;
 
   return weight;
@@ -243,18 +258,25 @@ int main() {
   // size_t nw; cin >> nw;
   // double m; cin >> m;
 
-  Energy Epart = 9.*1000.*GeV;  
+  int nev = 10000;
+
+  Energy Ecm = 9.*1000.*GeV;  
   Energy mw = 80.4 * GeV;
-  int nf = 7;
-  int nw = 10;
+  int nf = 2;
+  int nw = 0;
 
   vector<Energy> massvec;
   for(int i=0; i<nf; i++) massvec.push_back(0.*GeV);
-  for(int i=0; i<nf; i++) massvec.push_back(mw);
-  
-  double wei; 
-  wei = generateRamboKinematics(massvec, Epart);
-  cout << wei << endl;
+  for(int i=0; i<nw; i++) massvec.push_back(mw);
+
+  double PS = 0;
+  for(int iev; iev < nev; iev++){  
+    double wei; 
+    wei = generateRamboKinematics(massvec, Ecm);
+    PS += wei;
+    //cout << wei << endl;
+  }
+  cout << PS/nev << endl;
 
 }
 
