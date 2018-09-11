@@ -157,7 +157,7 @@ static double weights[45] = {
 
 
 // RAMBO generation
-double generateRamboKinematics(
+pair<double, vector<Lorentz5Momentum>> generateRamboKinematics(
              vector<Energy> m,
 			       Energy Ecm) {
 
@@ -233,21 +233,14 @@ double generateRamboKinematics(
     (*k).rescaleEnergy();
   }
 
-  if(0){
-    for ( vector<Lorentz5Momentum>::iterator k = P.begin();
-    k != P.end(); ++k, ++d ) {
-      double px = k->x()/GeV;
-      double py = k->y()/GeV;
-      double pz = k->z()/GeV;
-      double E = k->t()/GeV;
-      double m = k->m()/GeV;
-      cout << E <<"  "<< px <<"  "<< py <<"  "<< pz <<"  "<< m << endl;
-    }
-  }
-
   weight *= num/den;
 
-  return weight;
+  double scale = pow(Ecm/GeV, 2*n-4);
+  double wei = weight*scale;
+
+  pair<double, vector<Lorentz5Momentum>> res = make_pair(wei, P);
+  //return weight*scale;
+  return res;
 
 }
 
@@ -262,8 +255,8 @@ int main() {
 
   Energy Ecm = 9.*1000.*GeV;  
   Energy mw = 80.4 * GeV;
-  int nf = 2;
-  int nw = 0;
+  int nf = 7;
+  int nw = 10;
 
   vector<Energy> massvec;
   for(int i=0; i<nf; i++) massvec.push_back(0.*GeV);
@@ -271,9 +264,21 @@ int main() {
 
   double PS = 0;
   for(int iev; iev < nev; iev++){  
-    double wei; 
-    wei = generateRamboKinematics(massvec, Ecm);
+    pair<double, vector<Lorentz5Momentum>> res = generateRamboKinematics(massvec, Ecm);
+    double wei = res.first;
+    vector<Lorentz5Momentum> p = res.second;
     PS += wei;
+    vector<Energy>::const_iterator d = massvec.begin();
+    if(1){
+      cout << iev << endl;
+      for ( vector<Lorentz5Momentum>::iterator k = p.begin();
+      k != p.end(); ++k, ++d ) {
+        double px = k->x()/GeV; double py = k->y()/GeV; double pz = k->z()/GeV;
+        double E = k->t()/GeV; double m = k->m()/GeV;
+        cout << wei <<"  "<< E <<"  "<< px <<"  "<< py <<"  "<< pz <<"  "<< m << endl;
+      }
+    }
+
     //cout << wei << endl;
   }
   cout << PS/nev << endl;
