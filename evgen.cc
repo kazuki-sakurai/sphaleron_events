@@ -270,12 +270,12 @@ int main() {
     PS += wei;
     vector<Energy>::const_iterator d = massvec.begin();
     if(1){
-      cout << iev << endl;
+      cout << iev <<"   "<< wei << endl;
       for ( vector<Lorentz5Momentum>::iterator k = p.begin();
       k != p.end(); ++k, ++d ) {
         double px = k->x()/GeV; double py = k->y()/GeV; double pz = k->z()/GeV;
         double E = k->t()/GeV; double m = k->m()/GeV;
-        cout << wei <<"  "<< E <<"  "<< px <<"  "<< py <<"  "<< pz <<"  "<< m << endl;
+        cout << E <<"  "<< px <<"  "<< py <<"  "<< pz <<"  "<< m << endl;
       }
     }
 
