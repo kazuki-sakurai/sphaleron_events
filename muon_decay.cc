@@ -287,11 +287,11 @@ int main() {
   double fac1 = 64.*GF*GF;
 
   double mm = mmu/GeV;
-  double dec_mu = GF*GF * pow(mm, 5) / (192.*pow(pi,3)); // 3.00918e-19 GeV
+  double dec_exact = GF*GF * pow(mm, 5) / (192.*pow(pi,3)); // 3.00918e-19 GeV
 
   double PS = 0;
 
-  double dec = 0;
+  double integ = 0;
 
   for(int iev=0; iev < nev; iev++){  
 
@@ -306,16 +306,16 @@ int main() {
     double me2_ = ME2(mmu, p2, q1, q2);
     //cout << wei <<"  "<<  me2_ << endl;
 
-    dec += wei * me2_;
+    integ += wei * me2_;
 
   }
 
-  double dec_rambo = dec/nev;
+  double dec_rambo = (integ/nev) / (2.*mm);
 
   cout << "The muon decay rate validation:" << endl;
   cout << "[Rambo integration] = " << dec_rambo << endl;
-  cout << "    [Exact formula] = " << dec_mu << endl;
-  cout << "      [Rambo/Exact] = " << dec_rambo/dec_mu << endl;
+  cout << "    [Exact formula] = " << dec_exact << endl;
+  cout << "      [Rambo/Exact] = " << dec_rambo/dec_exact << endl;
 
   return 0;
   //#################################################################
